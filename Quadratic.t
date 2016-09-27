@@ -58,6 +58,14 @@ function gposY(y : real) : int
     result round(y * 2 + 200)
 end gposY
 
+function translateToFunction(number : real) : string
+    if number > 0 then
+        result "+ " + realstr(number, 0)
+    else
+        result "- " + realstr(-number, 0)
+    end if
+end translateToFunction
+
 % Graphs the data given from the array
 procedure graphData(data : array 0 .. 200 of int)
     var lastX : int := -100
@@ -92,7 +100,7 @@ end updateError
 
 % Update the Values
 procedure updateValues
-    discriminant := (b ** 2) - (4 * a * c) % Update discriminant
+    discriminant := b ** 2 - 4 * a * c % Update discriminant
     imaginary := discriminant < 0 % Update imaginary roots values
     
     if not imaginary then
@@ -139,29 +147,9 @@ end updateGraph
 
 % Updates the Information pane
 procedure updateInformation
-    GUI.SetLabel(iLabel12, "STANDARD FORM: 0 = " + realstr(a, 0) + "x\^2 + " + realstr(b, 0) + "x + " + realstr(c, 0)) % Show standard form
-    
-    var firstRoot : string
-    if root1 * -1 > 0 then
-        firstRoot := "+ " + realstr(root1 * -1, 0)
-    else
-        firstRoot := "- " + realstr(root1, 0)
-    end if
-    var secondRoot : string
-    if root2 * -1 > 0 then
-        secondRoot := "+ " + realstr(root2 * -1, 0)
-    else
-        secondRoot := "- " + realstr(root2, 0)
-    end if
-    
-    if not imaginary then
-        % Show factored form (Not Imaginary)
-        GUI.SetLabel(iLabel11, "FACTORED FORM: y = " + realstr(a, 0) + "(x " + firstRoot + ")(x " + secondRoot + ")")
-    else
-        % Show factored form (Imaginary)
-        GUI.SetLabel(iLabel11, "FACTORED FORM: y = " + realstr(a, 0) + "(x " + firstRoot + "i)(x " + secondRoot + "i)")
-    end if
-    GUI.SetLabel(iLabel10, "VERTEX FORM: y = " + realstr(a, 0) + "(x - " + realstr(vertexX, 0) + ")\^2 + " + realstr(vertexY, 0)) % Show vertex form
+    GUI.SetLabel(iLabel12, "STANDARD FORM: 0 = " + realstr(a, 0) + "x\^2 " + translateToFunction(b) + "x " + translateToFunction(c)) % Show standard form
+    GUI.SetLabel(iLabel11, "FACTORED FORM: f(x) = " + realstr(a, 0) + "(x " + translateToFunction(-root1) + ")(x " + translateToFunction(-root2) + ")")
+    GUI.SetLabel(iLabel10, "VERTEX FORM: y = " + realstr(a, 0) + "(x " + translateToFunction(-vertexX) + ")\^2 " + translateToFunction(vertexY)) % Show vertex form
     
     % Check the opening direction
     if a > 0 then
@@ -232,28 +220,8 @@ procedure save
     
     put : stream, "--------------"
     
-    put : stream, "Standard Form: 0 = " + realstr(a, 0) + "x\^2 + " + realstr(b, 0) + "x + " + realstr(c, 0) % Save equation in standard form
-    
-    var firstRoot : string
-    if root1 * -1 > 0 then
-        firstRoot := "+ " + realstr(root1 * -1, 0)
-    else
-        firstRoot := "- " + realstr(root1, 0)
-    end if
-    var secondRoot : string
-    if root2 * -1 > 0 then
-        secondRoot := "+ " + realstr(root2 * -1, 0)
-    else
-        secondRoot := "- " + realstr(root2, 0)
-    end if
-    
-    if not imaginary then
-        % Save equation in factored form (Not Imaginary)
-        put : stream, "Factored Form: y = " + realstr(a, 0) + "(x " + realstr(root1, 0) + ")(x " + realstr(root2, 0) + ")"
-    else
-        % Save equation in factored form (Imaginary)
-        put : stream, "Factored Form: y = " + realstr(a, 0) + "(x " + realstr(root1, 0) + "i)(x " + realstr(root2, 0) + "i)"
-    end if
+    put : stream, "Standard Form: 0 = " + realstr(a, 0) + "x\^2 " + translateToFunction(b) + "x " + translateToFunction(c) % Save equation in standard form
+    put : stream, "Factored Form: f(x) = " + realstr(a, 0) + "(x " + translateToFunction(-root1) + ")(x " + translateToFunction(-root2) + ")" % Save equation in factored form
     put : stream, "Vertex Form: y = " + realstr(a, 0) + "(x - " + realstr(vertexX, 0) + ")\^2 + " + realstr(vertexY, 0) % Save equation in vertex form
     
     put : stream, "--------------"
